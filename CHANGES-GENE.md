@@ -1,5 +1,16 @@
 # Gene Fork changes
 
+## 0.3.31-gene.2 — 2026-10-21
+
+- Use stable radix ordering for meshes with at least 4,096 translucent quads.
+  Smaller meshes retain merge sorting. Equal-distance faces retain their original
+  order; NaN distances use the original comparison path.
+- Preserve distance calculations, movement thresholds, sort scheduling, visible
+  geometry and OpenGL requirements. No additional dependencies are introduced.
+- Add exact-order regression checks covering the threshold, repeated distances,
+  signed zero, infinities and NaNs. See [performance notes](docs/performance.md)
+  for the measured scope and limitations.
+
 ## 0.3.31-gene.1 — 2026-10-21
 
 Based on Embeddium 0.3.31 (`87d1a75aecc230a25a1c152df8fbd7d2ca8bd2fd`).
@@ -28,9 +39,10 @@ Use JDK 17 and the included Gradle wrapper:
 ./gradlew -Pbuild.release=true build jarJar
 ```
 
-The distributable JAR is `build/libs/embeddium-0.3.31-gene.1+mc1.20.1.jar`.
+The distributable JAR is `build/libs/embeddium-0.3.31-gene.2+mc1.20.1.jar`.
 The `-slim` JAR is not the normal client distribution. `check` includes 1,000
-randomized render-list rebuilds compared with the original geometry-filter walk.
+randomized render-list rebuilds compared with the original geometry-filter walk
+and 864 transparent-sort cases compared with the original stable merge order.
 
 The build retains the upstream Forge 47.2.32 compile baseline; runtime acceptance
 targets Forge 47.3.0 or later on Minecraft 1.20.1. This does not raise the existing

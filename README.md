@@ -10,13 +10,14 @@ Gene Fork builds; the mod ID remains `embeddium`. Install one Embeddium JAR at a
 
 ## Changes
 
+- Faster sorting for large translucent meshes, with the original face order preserved.
 - Fewer section visits when scheduling translucent mesh sorting.
 - Shader and program cleanup on compilation, linking and initialization failures.
 - A versioned, read-only terrain interface with mesh lifetime callbacks.
 - Existing OpenGL feature requirements and upstream compatibility paths retained.
 
 See [changes and build instructions](CHANGES-GENE.md) and the
-[terrain integration contract](docs/terrain-access.md).
+[terrain integration contract](docs/terrain-access.md) and [performance notes](docs/performance.md).
 Report Gene Fork issues in [this repository](https://github.com/17Artist/embeddium/issues).
 Upstream Embeddium is available at [FiniteReality/embeddium](https://github.com/FiniteReality/embeddium).
 

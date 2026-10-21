@@ -1,7 +1,5 @@
 package me.jellysquid.mods.sodium.client.render.chunk.compile;
 
-import com.google.common.primitives.Floats;
-import it.unimi.dsi.fastutil.ints.IntArrays;
 import me.jellysquid.mods.sodium.client.util.NativeBuffer;
 import org.embeddedt.embeddium.render.chunk.sorting.TranslucentQuadAnalyzer;
 import org.jetbrains.annotations.Nullable;
@@ -103,12 +101,8 @@ public class ChunkBufferSorter {
 
         float[] centers = chunkData.centers();
         int quadCount = centers.length / 3;
-        int[] indicesArray = new int[quadCount];
         float[] distanceArray = new float[quadCount];
         boolean isStatic = chunkData.level() == TranslucentQuadAnalyzer.Level.STATIC;
-        for (int quadIdx = 0; quadIdx < quadCount; ++quadIdx) {
-            indicesArray[quadIdx] = quadIdx;
-        }
 
         if (isStatic) {
             buildStaticDistanceArray(centers, distanceArray,
@@ -124,7 +118,7 @@ public class ChunkBufferSorter {
             buildDynamicDistanceArray(centers, distanceArray, quadCount, x, y, z);
         }
 
-        IntArrays.mergeSort(indicesArray, (a, b) -> Floats.compare(distanceArray[b], distanceArray[a]));
+        int[] indicesArray = TranslucentDistanceSort.sort(distanceArray);
 
         return generateIndexBuffer(indexBuffer, indicesArray);
     }

@@ -281,3 +281,11 @@ val verifyTerrainIndex by tasks.registering(JavaExec::class) {
     mainClass.set("org.embeddedt.embeddium.checks.TerrainIndexCheck")
 }
 tasks.check { dependsOn(verifyTerrainIndex) }
+
+val verifyTranslucentDistanceSort by tasks.registering(JavaExec::class) {
+    group = "verification"
+    dependsOn(tasks.testClasses)
+    classpath = sourceSets.test.get().runtimeClasspath
+    mainClass.set("me.jellysquid.mods.sodium.client.render.chunk.compile.TranslucentDistanceSortCheck")
+}
+tasks.check { dependsOn(verifyTranslucentDistanceSort) }
