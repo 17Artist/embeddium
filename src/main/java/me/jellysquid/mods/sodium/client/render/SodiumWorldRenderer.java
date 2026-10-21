@@ -1,5 +1,6 @@
 package me.jellysquid.mods.sodium.client.render;
 
+import org.embeddedt.embeddium.api.render.TerrainRenderAccess;
 import com.google.common.collect.Iterators;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -71,6 +72,11 @@ public class SodiumWorldRenderer {
     private Viewport currentViewport;
 
     private RenderSectionManager renderSectionManager;
+
+    /** Borrowed manager for TerrainRenderAccess; integrations must not mutate it. */
+    public RenderSectionManager getRenderSectionManager() {
+        return this.renderSectionManager;
+    }
 
     /**
      * @return The SodiumWorldRenderer based on the current dimension
@@ -237,6 +243,7 @@ public class SodiumWorldRenderer {
         profiler.pop();
 
         Entity.setViewScale(Mth.clamp((double) this.client.options.getEffectiveRenderDistance() / 8.0D, 1.0D, 2.5D) * this.client.options.entityDistanceScaling().get());
+        TerrainRenderAccess.terrainPrepared();
     }
 
     private void processChunkEvents() {

@@ -4,13 +4,15 @@ license="LGPL-3.0-only"
 [[mods]]
 modId="embeddium"
 version="${version}"
-displayName="Embeddium"
+displayName="Embeddium · Gene Fork"
+displayURL="https://github.com/17Artist/embeddium"
 logoFile="icon.png"
 description='''
-Embeddium is a fork of Rubidium, a fork of Sodium with patches for Forge
+Minecraft 1.20.1 的 Embeddium 维护分支。优化透明材质排序与渲染资源管理，并提供地形渲染接入接口。
+Maintained Embeddium fork for Minecraft 1.20.1, with translucent sorting optimizations, resource lifetime fixes, and terrain integration APIs.
 '''
 credits="embeddedt, NanoLive, CaffeineMC"
-authors="embeddedt"
+authors="17Artist (Gene Fork), embeddedt (Embeddium)"
 
 [[mods]]
 modId = "rubidium"

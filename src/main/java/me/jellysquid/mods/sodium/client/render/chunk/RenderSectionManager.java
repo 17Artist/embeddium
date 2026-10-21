@@ -1,5 +1,6 @@
 package me.jellysquid.mods.sodium.client.render.chunk;
 
+import org.embeddedt.embeddium.api.render.TerrainRenderAccess;
 import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.longs.Long2ReferenceMap;
 import it.unimi.dsi.fastutil.longs.Long2ReferenceMaps;
@@ -164,7 +165,7 @@ public class RenderSectionManager {
         for (Iterator<ChunkRenderList> it = this.renderLists.iterator(); it.hasNext(); ) {
             ChunkRenderList entry = it.next();
             var region = entry.getRegion();
-            ByteIterator sectionIterator = entry.sectionsWithGeometryIterator(false);
+            ByteIterator sectionIterator = entry.sectionsWithTranslucencyIterator();
             if (sectionIterator == null) {
                 continue;
             }
@@ -275,6 +276,7 @@ public class RenderSectionManager {
             return;
         }
 
+        TerrainRenderAccess.beforeMeshMutation();
         RenderRegion region = this.regions.createForChunk(x, y, z);
 
         RenderSection renderSection = new RenderSection(region, x, y, z);
@@ -298,12 +300,14 @@ public class RenderSectionManager {
     }
 
     public void onSectionRemoved(int x, int y, int z) {
-        RenderSection section = this.sectionByPosition.remove(SectionPos.asLong(x, y, z));
+        RenderSection section = this.sectionByPosition.get(SectionPos.asLong(x, y, z));
 
         if (section == null) {
             return;
         }
 
+        TerrainRenderAccess.beforeMeshMutation();
+        this.sectionByPosition.remove(SectionPos.asLong(x, y, z));
         RenderRegion region = section.getRegion();
 
         if (region != null) {
@@ -396,6 +400,7 @@ public class RenderSectionManager {
             return;
         }
 
+        TerrainRenderAccess.beforeMeshMutation();
         this.processChunkBuildResults(results);
 
         for (var result : results) {
@@ -430,9 +435,7 @@ public class RenderSectionManager {
     }
 
     private void updateTranslucencyInfo(RenderSection render, BuiltSectionMeshParts translucencyMesh) {
-        if(translucencyMesh == null)
-            return;
-        render.setSortState(translucencyMesh.getSortState());
+        render.setSortState(translucencyMesh == null ? null : translucencyMesh.getSortState());
     }
 
     private void updateSectionInfo(RenderSection render, BuiltSectionInfo info) {
@@ -554,6 +557,7 @@ public class RenderSectionManager {
     }
 
     public void destroy() {
+        TerrainRenderAccess.beforeMeshMutation();
         this.builder.shutdown(); // stop all the workers, and cancel any tasks
 
         for (var result : this.collectChunkBuildResults()) {
@@ -669,7 +673,8 @@ public class RenderSectionManager {
         }
     }
 
-    private RenderSection getRenderSection(int x, int y, int z) {
+    /** Borrowed section; use TerrainRenderAccess lifetime callbacks before retaining it. */
+    public RenderSection getRenderSection(int x, int y, int z) {
         return this.sectionByPosition.get(SectionPos.asLong(x, y, z));
     }
 

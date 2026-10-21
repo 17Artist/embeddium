@@ -28,6 +28,10 @@ public class GLRenderDevice implements RenderDevice {
         return this.commandList;
     }
 
+    public boolean isActive() {
+        return this.isActive;
+    }
+
     @Override
     public void makeActive() {
         if (this.isActive) {

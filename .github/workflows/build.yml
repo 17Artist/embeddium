@@ -1,0 +1,32 @@
+name: Build Gene Fork
+on:
+  push:
+    branches: ['1.20.1']
+  pull_request:
+    branches: ['1.20.1']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+      - name: Build and check
+        run: ./gradlew --no-daemon -Pbuild.release=true build jarJar
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Embeddium-Gene-Fork-1.20.1
+          if-no-files-found: error
+          path: |
+            build/libs/*.jar
+            COPYING
+            COPYING.LESSER
+            CHANGES-GENE.md

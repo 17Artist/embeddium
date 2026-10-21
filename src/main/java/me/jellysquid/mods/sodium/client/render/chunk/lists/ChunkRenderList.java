@@ -14,6 +14,10 @@ public class ChunkRenderList {
     private final byte[] sectionsWithGeometry = new byte[RenderRegion.REGION_SIZE];
     private int sectionsWithGeometryCount = 0;
 
+    // Same visibility order as geometry, but skips sections with no transparent faces.
+    private final byte[] sectionsWithTranslucency = new byte[RenderRegion.REGION_SIZE];
+    private int sectionsWithTranslucencyCount;
+
     private final byte[] sectionsWithSprites = new byte[RenderRegion.REGION_SIZE];
     private int sectionsWithSpritesCount = 0;
 
@@ -30,6 +34,7 @@ public class ChunkRenderList {
 
     public void reset(int frame) {
         this.sectionsWithGeometryCount = 0;
+        this.sectionsWithTranslucencyCount = 0;
         this.sectionsWithSpritesCount = 0;
         this.sectionsWithEntitiesCount = 0;
 
@@ -49,6 +54,10 @@ public class ChunkRenderList {
 
         this.sectionsWithGeometry[this.sectionsWithGeometryCount] = (byte) index;
         this.sectionsWithGeometryCount += (flags >>> RenderSectionFlags.HAS_BLOCK_GEOMETRY) & 1;
+
+        this.sectionsWithTranslucency[this.sectionsWithTranslucencyCount] = (byte) index;
+        this.sectionsWithTranslucencyCount += ((flags >>> RenderSectionFlags.HAS_BLOCK_GEOMETRY)
+                & (flags >>> RenderSectionFlags.HAS_TRANSLUCENT_DATA)) & 1;
 
         this.sectionsWithSprites[this.sectionsWithSpritesCount] = (byte) index;
         this.sectionsWithSpritesCount += (flags >>> RenderSectionFlags.HAS_ANIMATED_SPRITES) & 1;
@@ -79,6 +88,15 @@ public class ChunkRenderList {
         }
 
         return new ByteArrayIterator(this.sectionsWithEntities, this.sectionsWithEntitiesCount);
+    }
+
+    public @Nullable ByteIterator sectionsWithTranslucencyIterator() {
+        return this.sectionsWithTranslucencyCount == 0 ? null
+                : new ByteArrayIterator(this.sectionsWithTranslucency, this.sectionsWithTranslucencyCount);
+    }
+
+    public int getSectionsWithTranslucencyCount() {
+        return this.sectionsWithTranslucencyCount;
     }
 
     public int getSectionsWithGeometryCount() {

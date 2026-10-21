@@ -155,6 +155,7 @@ public class RenderSection {
         this.globalBlockEntities = null;
         this.culledBlockEntities = null;
         this.animatedSprites = null;
+        this.sortState = null;
     }
 
     /**

@@ -1,28 +1,24 @@
 <img src="src/main/resources/icon.png" width="128">
 
-# Embeddium
+# Embeddium · Gene Fork
 
-[![Modrinth Downloads](https://img.shields.io/modrinth/dt/sk9rgfiA?label=Modrinth&labelColor=%232D2D2D)](https://modrinth.com/mod/embeddium)
-[![Modrinth Version](https://img.shields.io/modrinth/v/sk9rgfiA?label=Latest%20version&labelColor=%232D2D2D)](https://modrinth.com/mod/embeddium/versions)
-[![](http://cf.way2muchnoise.eu/short_embeddium_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/embeddium)
-[![](http://cf.way2muchnoise.eu/versions/Available%20for_embeddium_full.svg)](https://www.curseforge.com/minecraft/mc-mods/embeddium/files)
+A maintained Embeddium branch for **Minecraft 1.20.1 / Forge**, focused on terrain
+rendering performance and integration with additional visual effects.
 
-Embeddium is a free and open-source performance mod for Minecraft clients. It is based on the last FOSS-licensed version of the Sodium codebase, and includes additional bugfixes & features for better mod compatibility.
+This branch starts from Embeddium 0.3.31. The `-gene.N` version suffix identifies
+Gene Fork builds; the mod ID remains `embeddium`. Install one Embeddium JAR at a time.
 
-Despite being forked from Sodium, Embeddium is **not supported by CaffeineMC**. Do not report issues encountered with it to their bug tracker or in their Discord. I have my own [Discord server](https://discord.gg/rN9Y7caguP) for my mods.
+## Changes
 
-## Highlights
+- Fewer section visits when scheduling translucent mesh sorting.
+- Shader and program cleanup on compilation, linking and initialization failures.
+- A versioned, read-only terrain interface with mesh lifetime callbacks.
+- Existing OpenGL feature requirements and upstream compatibility paths retained.
 
-* All performance improvements from Sodium 0.5.8 and earlier, i.e. a rewritten terrain renderer, various optimizations to the immediate-mode rendering pipeline (used by entities, GUIs, block entities, etc.), and other miscellaneous improvements
-* Available for Minecraft Forge on 1.20.1 and older, and Fabric/NeoForge on 1.20.1 and newer
-* Integrated Fabric Rendering API support (Indium is no longer required, and will not work with Embeddium)
-* Frequent patch updates to fix mod compatibility issues soon after being reported & reproduced
-* Additional APIs for mod integration
-* Optional support for translucency sorting (can be enabled in Video Settings)
-
-## For developers
-
-If you're looking to add Embeddium to your development environment, please take a look at the [dedicated wiki page](https://github.com/embeddedt/embeddium/wiki/For-Developers) for instructions & recommended guidelines for integration.
+See [changes and build instructions](CHANGES-GENE.md) and the
+[terrain integration contract](docs/terrain-access.md).
+Report Gene Fork issues in [this repository](https://github.com/17Artist/embeddium/issues).
+Upstream Embeddium is available at [FiniteReality/embeddium](https://github.com/FiniteReality/embeddium).
 
 ## Credits
 

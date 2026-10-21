@@ -1,6 +1,5 @@
 blank_issues_enabled: true
 contact_links:
-  - name: For help with other issues, join our Discord community
-    url: https://discord.gg/rN9Y7caguP
-    about: This is the best option for getting help with mod installation, performance issues, and any other support inquiries
-    # Copied from https://github.com/CaffeineMC/sodium-fabric#community
+  - name: Build and integration documentation
+    url: https://github.com/17Artist/embeddium/tree/1.20.1
+    about: Gene Fork changes, build instructions and terrain API documentation.

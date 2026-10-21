@@ -74,9 +74,10 @@ public class GlProgram<T> extends GlObject implements ShaderBindingContext {
         return new GlUniformBlock(bindingPoint);
     }
 
-    public static class Builder {
+    public static class Builder implements AutoCloseable {
         private final ResourceLocation name;
         private final int program;
+        private boolean owned = true;
 
         public Builder(ResourceLocation name) {
             this.name = name;
@@ -84,6 +85,7 @@ public class GlProgram<T> extends GlObject implements ShaderBindingContext {
         }
 
         public Builder attachShader(GlShader shader) {
+            this.requireOwned();
             GL20C.glAttachShader(this.program, shader.handle());
 
             return this;
@@ -99,30 +101,51 @@ public class GlProgram<T> extends GlObject implements ShaderBindingContext {
          * @return An instantiated shader container as provided by the factory
          */
         public <U> GlProgram<U> link(Function<ShaderBindingContext, U> factory) {
-            GL20C.glLinkProgram(this.program);
+            this.requireOwned();
+            try {
+                GL20C.glLinkProgram(this.program);
 
-            String log = GL20C.glGetProgramInfoLog(this.program);
+                String log = GL20C.glGetProgramInfoLog(this.program);
 
-            if (!log.isEmpty()) {
-                LOGGER.warn("Program link log for " + this.name + ": " + log);
+                if (!log.isEmpty()) {
+                    LOGGER.warn("Program link log for " + this.name + ": " + log);
+                }
+
+                int result = GlStateManager.glGetProgrami(this.program, GL20C.GL_LINK_STATUS);
+
+                if (result != GL20C.GL_TRUE) {
+                    throw new RuntimeException("Shader program linking failed, see log for details");
+                }
+
+                var linked = new GlProgram<>(this.program, factory);
+                this.owned = false;
+                return linked;
+            } finally {
+                this.close();
             }
-
-            int result = GlStateManager.glGetProgrami(this.program, GL20C.GL_LINK_STATUS);
-
-            if (result != GL20C.GL_TRUE) {
-                throw new RuntimeException("Shader program linking failed, see log for details");
-            }
-
-            return new GlProgram<>(this.program, factory);
         }
 
         public Builder bindAttribute(String name, int index) {
+            this.requireOwned();
             GL20C.glBindAttribLocation(this.program, index, name);
 
             return this;
         }
 
+        private void requireOwned() {
+            if (!this.owned) throw new IllegalStateException("Program builder already closed or linked");
+        }
+
+        @Override
+        public void close() {
+            if (this.owned) {
+                this.owned = false;
+                GL20C.glDeleteProgram(this.program);
+            }
+        }
+
         public Builder bindFragmentData(String name, int index) {
+            this.requireOwned();
             GL30C.glBindFragDataLocation(this.program, index, name);
 
             return this;

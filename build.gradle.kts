@@ -9,7 +9,7 @@ plugins {
     id("maven-publish")
     id("org.spongepowered.mixin") version("0.7.38")
 
-    id("me.modmuss50.mod-publish-plugin") version("0.3.4")
+
 
     id("org.parchmentmc.librarian.forgegradle") version("1.2.0.7-dev-SNAPSHOT")
 
@@ -217,7 +217,7 @@ tasks.named<Jar>("jar").configure {
 }
 
 tasks.jarJar {
-    from("COPYING", "COPYING.LESSER", "README.md")
+    from("COPYING", "COPYING.LESSER", "README.md", "CHANGES-GENE.md")
 
     extraSourceSets.forEach {
         from(sourceSets[it].output.classesDirs)
@@ -269,43 +269,14 @@ publishing {
     }
 }
 
-publishMods {
-    file = tasks.jarJar.get().archiveFile
-    changelog = "https://github.com/embeddedt/embeddium/wiki/Changelog"
-    type = STABLE
-    modLoaders.add("forge")
-    modLoaders.add("neoforge")
-
-    curseforge {
-        projectId = "908741"
-        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-        minecraftVersions.add("minecraft_version"())
-
-        incompatible {
-            slug = "rubidium"
-        }
-
-        incompatible {
-            slug = "textrues-embeddium-options"
-        }
-    }
-    modrinth {
-        projectId = "sk9rgfiA"
-        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
-        minecraftVersions.add("minecraft_version"())
-
-        incompatible {
-            slug = "rubidium"
-        }
-
-        incompatible {
-            slug = "textrues-embeddium-options"
-        }
-    }
-
-    displayName = "[${"minecraft_version"()}] Embeddium ${"mod_version"()}"
-}
-
 fun getModVersion(): String {
     return ProjectVersioner.computeVersion(project.projectDir, project.properties)
 }
+
+val verifyTerrainIndex by tasks.registering(JavaExec::class) {
+    group = "verification"
+    dependsOn(tasks.testClasses)
+    classpath = sourceSets.test.get().runtimeClasspath
+    mainClass.set("org.embeddedt.embeddium.checks.TerrainIndexCheck")
+}
+tasks.check { dependsOn(verifyTerrainIndex) }

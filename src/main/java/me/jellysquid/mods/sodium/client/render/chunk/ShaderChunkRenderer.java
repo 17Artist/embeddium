@@ -44,11 +44,12 @@ public abstract class ShaderChunkRenderer implements ChunkRenderer {
         GlShader vertShader = ShaderLoader.loadShader(ShaderType.VERTEX,
                 new ResourceLocation("sodium", path + ".vsh"), constants);
         
-        GlShader fragShader = ShaderLoader.loadShader(ShaderType.FRAGMENT,
-                new ResourceLocation("sodium", path + ".fsh"), constants);
+        GlShader fragShader = null;
 
-        try {
-            return GlProgram.builder(new ResourceLocation("sodium", "chunk_shader"))
+        try (var builder = GlProgram.builder(new ResourceLocation("sodium", "chunk_shader"))) {
+            fragShader = ShaderLoader.loadShader(ShaderType.FRAGMENT,
+                    new ResourceLocation("sodium", path + ".fsh"), constants);
+            return builder
                     .attachShader(vertShader)
                     .attachShader(fragShader)
                     .bindAttribute("a_PosId", ChunkShaderBindingPoints.ATTRIBUTE_POSITION_ID)
@@ -59,7 +60,7 @@ public abstract class ShaderChunkRenderer implements ChunkRenderer {
                     .link((shader) -> new ChunkShaderInterface(shader, options));
         } finally {
             vertShader.delete();
-            fragShader.delete();
+            if (fragShader != null) fragShader.delete();
         }
     }
 
@@ -85,6 +86,7 @@ public abstract class ShaderChunkRenderer implements ChunkRenderer {
     public void delete(CommandList commandList) {
         this.programs.values()
                 .forEach(GlProgram::delete);
+        this.programs.clear();
     }
 
     @Override
