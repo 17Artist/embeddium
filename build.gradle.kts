@@ -191,6 +191,7 @@ dependencies {
 }
 
 tasks.processResources {
+    filteringCharset = "UTF-8"
     inputs.property("version", "version"())
 
     filesMatching("META-INF/mods.toml") {
